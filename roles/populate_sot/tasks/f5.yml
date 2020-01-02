@@ -1,0 +1,198 @@
+# Example play to create hostvars out of limited information provided by users.
+# This can be further expanded to building source of truth.
+# It will perform 4 tasks:
+# 1) To Create a list of all devices to update the vars.
+# 2) To create the modeled vars out of the user provided request. (This is the csv input in this case.)
+# 3) To create a list of devices where the configuration is applied.
+#    This is specific to cluster/failover type of devices. Where we want to deploy the configuration on device only.
+# 4) To take the initially provided limited source of truth data and populate all hostvars with it.
+#    In this example its {{ playbook_dir }}/sot/l4_services.yml these vars.
+---
+- include_vars: "{{ playbook_dir }}/sot/l4_services.yml"
+
+- name: create a list of devices out of the VIPs info given by user => stored in all_dynamic_hosts var
+  set_fact:
+    all_dynamic_hosts: |
+        {% set vip_list = [] %}
+        {% for item in all_requested_vips %}
+        {% if item['vip_ip'] not in vip_list %}
+        {% set _ = vip_list.append(item['vip_ip']) %}
+        {% endif %}
+        {% endfor %}
+        {% set all_dynamic_hosts = [] %}
+        {% for ip in vip_list %}
+        {% for device in vips_config %}
+        {% for pool in device['vip_pools'] %}
+        {% if ip | ipaddr(pool) %}
+        {% if {"device":device['device'], "host":device['host']} not in all_dynamic_hosts %}
+        {% set _ = all_dynamic_hosts.append({"device":device['device'], "host":device['host']}) %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+        {{ all_dynamic_hosts }}
+  when: csv_infadfadput is defined
+
+- name: create a list of devices out of the VIPs info given by user => stored in all_dynamic_hosts var
+  set_fact:
+    all_dynamic_hosts: |
+        {% set vip_list = [] %}
+        {% for vip, config in all_requested_vips.items() %}
+        {% if config['vip_ip'] not in vip_list %}
+        {% set _ = vip_list.append(config['vip_ip']) %}
+        {% endif %}
+        {% endfor %}
+        {% set all_dynamic_hosts = [] %}
+        {% for ip in vip_list %}
+        {% for device in vips_config %}
+        {% for pool in device['vip_pools'] %}
+        {% if ip | ipaddr(pool) %}
+        {% if {"device":device['device'], "host":device['host']} not in all_dynamic_hosts %}
+        {% set _ = all_dynamic_hosts.append({"device":device['device'], "host":device['host']}) %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+        {{ all_dynamic_hosts }}
+  # when: jira_input is defined
+
+- debug: var=all_dynamic_hosts
+  # when: debug is defined
+
+- name: Create all_dynamic_hosts inventory group and add the F5 devices into it
+  add_host:
+    groups: all_dynamic_hosts
+    hostname: "{{ item['device'] }}"
+    ansible_host: "{{ item['host'] }}"
+    ansible_network_os: "bigip"
+    f5_type: "ltm"
+  loop: "{{ all_dynamic_hosts }}"
+
+- debug: var=hostvars[item]
+  when: debug is defined
+  with_items: "{{ groups.all_dynamic_hosts }}"
+
+- name: create a list of devices to run the deployment job => stored in dynamic_hosts var
+# // TODO In future this will be further fine tuned to include failover status of the device.
+  set_fact:
+    dynamic_hosts: |
+        {% set dynamic_hosts = [] %}
+        {% set cluster_group = [] %}
+        {% for item in vips_config %}
+        {% for device in groups.all_dynamic_hosts %}
+        {% if device == item['device'] %}
+        {% if device not in cluster_group %}
+        {% for dev in item['cluster_group'] %}
+        {% set _ = cluster_group.append(dev) %}
+        {% endfor %}
+        {% set _ = dynamic_hosts.append({"device":item['device'], "host":item['host']}) %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {{ dynamic_hosts }}
+
+- debug: var=dynamic_hosts
+  # when: debug is defined
+
+- name: Create dynamic_hosts inventory group and add the F5 devices into it
+  add_host:
+    groups: dynamic_hosts
+    hostname: "{{ item['device'] }}"
+    ansible_host: "{{ item['host'] }}"
+  loop: "{{ dynamic_hosts }}"
+
+- debug: var=hostvars[item]['f5_type']
+  when: debug is defined
+  loop: "{{ groups.dynamic_hosts }}"
+
+- name: Create VIPs objects to be added to SoT stored in vips_to_be_deployed var
+  set_fact:
+    vips_to_be_deployed: |
+        {% set vips_to_be_deployed = {} %}
+        {% for vip, config in all_requested_vips.items() %}
+        {% for device in vips_config %}
+        {% set dev = device['device'] %}
+        {% for pool in device['vip_pools'] %}
+        {% if config['vip_ip'] | ipaddr(pool) %}
+        {% if vips_to_be_deployed[dev] is not defined %}
+        {% set _ = vips_to_be_deployed.update({dev:{}}) %}
+        {% set _ = vips_to_be_deployed[dev].update({vip:config}) %}
+        {% else %}
+        {% set _ = vips_to_be_deployed[dev].update({vip:config}) %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+        {{ vips_to_be_deployed }}
+
+- debug: var=vips_to_be_deployed
+  when: debug is defined
+
+- name: Copy VIPS_TO_BE_DEPLOYED vars to file
+  copy: 
+    content: "{{ vips_to_be_deployed | to_nice_yaml }}"
+    dest: "{{ playbook_dir }}/realtime_vars/vips_to_be_deployed.yml"
+
+- name: Delete any previously created output files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ playbook_dir }}/host_vars/"
+  delegate_to: localhost
+  run_once: true
+
+- name: Ensure HOSTVARS output Directory exist
+  file:
+    path: "{{ playbook_dir }}/host_vars/"
+    state: directory
+  loop: "{{ groups.all_dynamic_hosts }}"
+
+- name: Ensure HOSTVARS output files exist
+  file:
+    path: "{{ playbook_dir }}/host_vars/{{ item }}.yml"
+    state: touch
+  loop: "{{ groups.all_dynamic_hosts }}"
+
+- name: Update HOST_VARS based on the VIPs objects
+# Using the YAML editor from [kwoodson/ansible-role-yedit](https://github.com/kwoodson/ansible-role-yedit)
+  yedit:
+    src: "{{ playbook_dir }}/host_vars/{{ item }}.yml"
+    key: l4_services
+    value: "{{ vips_to_be_deployed[item] }}"
+    state: present
+    # update: true  # This is needed if you would like to update existing object. Otherwise it will just overwrite.
+  loop: "{{ groups.all_dynamic_hosts }}"
+  register: vips_yaml_object
+
+- name: Creating object for devices with remaining SoT data
+  set_fact:
+    sot: |
+      {% set sot_dict = dict() %}
+      {% for dev in groups.all_dynamic_hosts %}
+      {% for device in vips_config %}
+      {% if device['device'] == dev %}
+      {% set _ = sot_dict.update({dev:{}}) %}
+      {% set _ = sot_dict[dev].update(device) %}
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+      {{ sot_dict }}
+
+- debug: var=sot
+  when: debug is defined
+
+- name: Update HOST_VARS with provide SoT
+  blockinfile:
+      path: "{{ playbook_dir }}/host_vars/{{ item }}.yml"
+      state: present
+      block: "{{ sot[item] | to_nice_yaml }}"
+      insertafter: EOF
+  loop: "{{ groups.all_dynamic_hosts }}"
+
+- debug: var=vips_yaml_object['results']
+  when: debug is defined

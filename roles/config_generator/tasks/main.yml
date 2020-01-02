@@ -1,0 +1,4 @@
+---
+- include_tasks: prep_env.yml
+- include_tasks: "{{ platform }}/main.yml"
+- include_tasks: assemble_config.yml

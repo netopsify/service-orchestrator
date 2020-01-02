@@ -1,0 +1,8 @@
+#jinja2: lstrip_blocks: "True"
+{% set services = hostvars[inventory_hostname]['vips'] %}
+{% for vip in services %}
+create ltm pool pool-tcp-{{ vip['vip_port'] }}.{{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }} load-balancing-mode {{ vip['lb_mode'] }} members add { {% for node in vip['pool'] %}{{ node.node_ip }}:{{ node.node_port }} {address {{ node.node_ip }}} {% if not loop.last %}{% endif %}{% endfor %}} monitor {% for monitor in vip['monitors'] %}{{ monitor }}{% if not loop.last %} and {% endif %}{% endfor %}
+
+create ltm virtual vs-tcp-{{ vip['vip_port'] }}.{{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }} destination {{ vip['vip_ip'] }}:{{ vip['vip_port'] }} ip-protocol tcp mask 255.255.255.255 pool pool-tcp-{{ vip['vip_port'] }}.{{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }} profiles add { {% for profile in vip['profiles'] %}{{ profile }} { }{% if not loop.last %} {% endif %}{% endfor %} } {% if vip['snat_irule'] is defined%}rule { {{ vip['snat_irule'] }} }{%endif%} description {{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }}-{{ vip['vip_port'] }}
+
+{% endfor %}

@@ -1,0 +1,10 @@
+---
+# The purpose of this Config Builder is to essentially search the hostvars with specific set of objects.
+# Then create configs based on a certain logic.
+# For instance each F5 Device will have the same data models for the VIPs. (Which was initially generated from the user requests)
+# However, now we need to build the actual config. Which is device and service specific.
+# Hence we will use the VIP data and apply the logic here to build the config.
+# Later we will then use the Config Data to build the actual device specific confguration or whatever.
+- name: Config Builder
+  include_tasks: config_builder.yml
+- include_tasks: render_vip_config.yml

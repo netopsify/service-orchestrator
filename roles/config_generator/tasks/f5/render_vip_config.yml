@@ -1,0 +1,55 @@
+---
+- debug: var=hostvars[inventory_hostname]['vips']
+  # when: debug is defined
+
+- name: Ensure direcotry exists for {{ inventory_hostname }}
+  file:
+    path: "{{ item }}"
+    state: directory
+  delegate_to: localhost
+  loop:
+  - "{{ playbook_dir }}/config/header/{{ inventory_hostname }}"
+  - "{{ playbook_dir }}/config/pre_check/{{ inventory_hostname }}"
+  - "{{ playbook_dir }}/config/implementation/{{ inventory_hostname }}"
+  - "{{ playbook_dir }}/config/verification/{{ inventory_hostname }}"
+  - "{{ playbook_dir }}/config/rollback/{{ inventory_hostname }}"
+
+- name: render header
+  template:
+      dest: "{{ playbook_dir }}/config/header/{{ inventory_hostname }}/header.txt"
+      src: "{{ platform }}/header/vip_cfg.j2"
+      trim_blocks: yes
+      lstrip_blocks: yes
+  delegate_to: localhost
+
+- name: render pre_check
+  template:
+      dest: "{{ playbook_dir }}/config/pre_check/{{ inventory_hostname }}/pre_check.txt"
+      src: "{{ platform }}/pre_check/vip_cfg.j2"
+      trim_blocks: yes
+      lstrip_blocks: yes
+  delegate_to: localhost
+
+- name: render implementation
+  template:
+      dest: "{{ playbook_dir }}/config/implementation/{{ inventory_hostname }}/implementation.txt"
+      src: "{{ platform }}/implementation/vip_cfg.j2"
+      trim_blocks: yes
+      lstrip_blocks: yes
+  delegate_to: localhost
+
+- name: render verification
+  template:
+      dest: "{{ playbook_dir }}/config/verification/{{ inventory_hostname }}/verification.txt"
+      src: "{{ platform }}/verification/vip_cfg.j2"
+      trim_blocks: yes
+      lstrip_blocks: yes
+  delegate_to: localhost
+
+- name: render rollback
+  template:
+      dest: "{{ playbook_dir }}/config/rollback/{{ inventory_hostname }}/rollback.txt"
+      src: "{{ platform }}/rollback/vip_cfg.j2"
+      trim_blocks: yes
+      lstrip_blocks: yes
+  delegate_to: localhost

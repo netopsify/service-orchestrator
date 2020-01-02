@@ -1,0 +1,139 @@
+---
+# - name: Fetch the Jira Story
+#   jira:
+#     uri: "{{ jira_url }}"
+#     username: "{{ jira_user }}"
+#     password: "{{ jira_password }}"
+#     project: "{{ jira_project_key }}"
+#     operation: fetch
+#     issue: "{{ jira_issue_key }}"
+#   register: jira_issue_contents
+#   tags: smartcore_jira_tickes
+
+# - name: Set ISSUE DATA as fact
+#   set_fact:
+#     issue_data: "{{ jira_issue_contents['meta'] }}"
+#   tags: smartcore_jira_tickes
+
+# - name: Create a list of Story's sub-tasks
+#   copy:
+#     content: |
+#       {% set issue_data = issue_data %}
+#       {% set story_subtasks_dict = dict() %}
+#       {% set _ = story_subtasks_dict.update({"story_subtasks":[]}) %}
+#       {% set subtasks = issue_data['fields']['subtasks'] %}
+#       {% for task in subtasks %}
+#       {% set _ = story_subtasks_dict['story_subtasks'].append(task['self']) %}
+#       {% endfor %}
+#       {{ story_subtasks_dict | to_nice_yaml(indent=2, width=50, explicit_start=True, explicit_end=True) }}
+#     dest: "{{ playbook_dir }}/story_subtasks.yml"
+#   tags: smartcore_jira_tickes
+
+# - name: Include the list of Story's sub-tasks as list
+#   include_vars:
+#     file: "{{ playbook_dir }}/story_subtasks.yml"
+#   tags: smartcore_jira_tickes
+
+# - name: Fetch details of all Jira Story's Sub-tasks
+#   uri:
+#     url: "{{ item }}"
+#     username: "{{ jira_user }}"
+#     password: "{{ jira_password }}"
+#     issue: "{{ item.split('/')[7] }}"
+#     return_content: True
+#     method: GET
+#   register: jira_story_subtasks_results
+#   loop: "{{ story_subtasks }}"
+#   tags: smartcore_jira_tickes
+
+- name: Fetch details of single Jira issue
+  uri:
+    url: "{{ jira_url.replace(jira_url.split('/')[3], jira_api) }}"
+    url_username: "{{ jira_user }}"
+    url_password: "{{ jira_password }}"
+    # issue: "{{ jira_url.split('/')[4] }}"
+    return_content: True
+    method: GET
+    force_basic_auth: yes
+  register: jira_story_subtasks_results
+  tags: smartcore_jira_tickes
+
+- name: Ensure realtime_vars directory exist
+  file:
+    name: "{{ item }}"
+    state: directory
+  loop:
+  - "{{ playbook_dir }}/realtime_vars/"
+
+- name: Copy the details of all Jira Story's Sub-tasks into json
+  copy:
+    content: "{{ jira_story_subtasks_results | to_nice_json(indent=2) }}"
+    dest: "{{ playbook_dir }}/realtime_vars/jira_story_subtasks_results.json"
+  tags: smartcore_jira_tickes
+
+- name: Include the Jira Story's sub-tasks results var
+  include_vars:
+    file: "{{ playbook_dir }}/realtime_vars/jira_story_subtasks_results.json"
+    name: jira_story_subtasks_results
+  tags: smartcore_jira_tickes
+
+- name: Create a detailed schema of the Jira Story's sub-tasks for further processing
+  copy:
+    content: "{{ jira_story_subtasks_results | single_jira_issue_extract }}"
+    dest: "{{ playbook_dir }}/realtime_vars/jira_story_subtasks_data.json"
+
+- name: Include the vars of the details Jira Story's sub-tasks data
+  include_vars:
+    file: "{{ playbook_dir }}/realtime_vars/jira_story_subtasks_data.json"
+  tags: smartcore_jira_tickes
+  when: demo_data is not defined
+
+- name: Include the vars of the details Jira Story's sub-tasks data
+  include_vars:
+    file: "{{ playbook_dir }}/demo_data/jira_story_subtasks_data.json"
+  tags: smartcore_jira_tickes
+  when: demo_data is defined
+
+- name: Create VIPS out of the Jira Sub-tasks data for populating SoT and Deployment
+  copy:
+    content: |
+      {% set all_requested_vips = dict() %}
+      {% for task_data in jira_story_subtasks_data %}
+      {% set task_summary = task_data['task_summary'] %}
+      {% set task_summary_list = task_summary.split('-') %}
+      {% set service_function = task_summary_list[3]|lower %}
+      {% set service_type = task_summary_list[4]|lower %}
+      {% if service_type == "out" %}
+      {% set vip_type = "b" %}
+      {% else %}
+      {% set vip_type = "a" %}
+      {% endif %}
+      {% set service_env = task_summary_list[5]|lower %}
+      {% if service_env == "sit" %}
+      {% set service_location = "dev" %}
+      {% else %}
+      {% set service_location = task_summary_list[6]|lower %}
+      {% endif %}
+      {% set vip_config = dp_SERVICENAME_service_model[service_function][service_type][service_env][service_location] %}
+      {% set task_description_list = task_data['task_description'] %}
+      {% for srv in task_description_list %}
+      {% set srv_list = srv.split(',') %}
+      {% set service_name = srv_list[0] %}
+      {% set vip_port = srv_list[1] %}
+      {% for vip, config in vip_config.items() %}
+      {% set vip_pool = [] %}
+      {% for node in config['pool'] %}
+      {% set _ = vip_pool.append({ "node_ip": node['node_ip'], "node_name": node['node_name'], "node_port": vip_port}) %}
+      {% endfor %}
+      {% set _ = all_requested_vips.update({config['vip_name'] ~ '_' ~ vip_port:{"vip_type": vip_type, "vip_ip": config['vip_ip'], "vip_name": config['vip_name'], "vip_port": vip_port, "service_name": service_name, "service_type": service_type, "pool": vip_pool }}) %}
+      {% endfor %}
+      {% endfor %}
+      {% endfor %}
+      {{ all_requested_vips | to_nice_yaml(indent=2) }}
+    dest: "{{ playbook_dir }}/realtime_vars/all_requested_vips.yml"
+
+- name: Include requested VIPS Vars
+  include_vars:
+    file: "{{ playbook_dir }}/realtime_vars/all_requested_vips.yml"
+    name: all_requested_vips
+

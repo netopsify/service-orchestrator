@@ -1,0 +1,15 @@
+---
+- name: Ensure direcotry exists for {{ inventory_hostname }}
+  file:
+    path: "{{ item }}"
+    state: directory
+  delegate_to: localhost
+  loop:
+  - "{{ playbook_dir }}/config/{{ inventory_hostname }}"
+  
+- name: render LB config
+  template:
+    dest: "config/{{ inventory_hostname }}/Deploy_Notes_LB_WT_.txt"
+    src: "{{ platform }}/assemble/config.j2"
+    trim_blocks: yes
+    lstrip_blocks: yes

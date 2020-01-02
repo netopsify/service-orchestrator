@@ -1,0 +1,27 @@
+#jinja2: lstrip_blocks: "True"
+{% set service_model = dict() %}
+{% for service in dp_vip_sot_structure_vars %}
+{% if service_model[service['service_function']] is not defined %}
+{% set _ = service_model.update({service['service_function']:{}})  %}
+{% endif %}
+{% if service_model[service['service_function']][service['service_type']] is not defined %}
+{% set _ = service_model[service['service_function']].update({service['service_type']:{}}) %}
+{% endif %}
+{% if service_model[service['service_function']][service['service_type']][service['service_env']] is not defined %}
+{% set _ = service_model[service['service_function']][service['service_type']].update({service['service_env']:{}}) %}
+{% endif %}
+{% if service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']] is not defined %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']].update({service['service_location']:{}}) %}
+{% endif %}
+{% if service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']] is not defined %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']].update({service['vip_name']:{}}) %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']].update({"vip_name":service['vip_name'],"vip_ip":service['vip_ip']}) %}
+{% endif %}
+{% if service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']]['pool'] is not defined %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']].update({'pool':[]}) %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']]['pool'].append({"node_name":service['node_name'],"node_ip":service['node_ip']}) %}
+{% else %}
+{% set _ = service_model[service['service_function']][service['service_type']][service['service_env']][service['service_location']][service['vip_name']]['pool'].append({"node_name":service['node_name'],"node_ip":service['node_ip']}) %}
+{% endif %}
+{% endfor %}
+{{ service_model | to_nice_yaml }}

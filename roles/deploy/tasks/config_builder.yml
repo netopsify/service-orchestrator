@@ -1,0 +1,71 @@
+---
+# This is essentially our business logic.
+# This is building `vips` object based on device and vip type.
+# This will be then used to configure the device or create cli snippets.
+
+- name: Delete previously created VARs file
+  file:
+      path: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}/vips.yml"
+      state: absent
+  delegate_to: localhost
+
+- name: Ensure directory exists for storing newly created VIPs
+  file:
+      path: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}"
+      state: directory
+  delegate_to: localhost
+
+- name: Ensure file exists for storing newly created VIPs
+  file:
+      path: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}/vips.yml"
+      state: touch
+  delegate_to: localhost
+
+- name: Create config specific VIPs object per device and type and store in file
+  copy:
+    content: |
+      vips:
+      {% for vip, config in l4_services.items() %}
+      {% set service_name = config['service_name'] %}
+      {% set service_type = config['service_type'] %}
+        vs-tcp-{{ config['vip_port'] }}.{{ service_name }}.{{ config['vip_name'] }}-{{ service_type }}-{{ config['vip_ip'] }}:
+          name: vs-tcp-{{ config['vip_port'] }}.{{ service_name }}.{{ config['vip_name'] }}-{{ service_type }}-{{ config['vip_ip'] }}
+          description: {{ service_name }}.{{ config['vip_name'] }}-{{ service_type }}-{{ config['vip_ip'] }}-{{ config['vip_port'] }}
+          destination: {{ config['vip_ip'] }}
+          port: {{ config['vip_port'] }}
+          snat: "automap"
+          pool:
+            name: pool-tcp-{{ config['vip_port'] }}.{{ service_name }}.{{ config['vip_name'] }}-{{ service_type }}-{{ config['vip_ip'] }}
+            lb_mode: "least-connections-node"
+            state: {{ pool_state | default('present') }}
+            nodes:
+      {% for node in config['pool'] %}
+            - host: {{ node.node_ip }}
+              name: {{ node.node_name }}
+              port: {{ node.node_port }}
+              node_state: {{ node.node_state | default('enabled') }}
+              member_state: {{ node.member_state | default('enabled') }}
+      {% endfor %}
+          monitors:
+          - "monitor-tcp-time-until-up-300"
+      {% for monitor in monitors %}
+      {% if config['vip_ip'] | string in monitor %}
+          - {{ monitor }}
+      {% endif %}
+      {% endfor %}
+      {% if config['vip_type'] == 'a' %}
+          irules: []
+      {% elif config['service_type']|upper == 'OUT' %}
+          irules:
+          - {{ snat_irule }}
+      {% endif %}
+          f5_vip_type: "performance-l4"
+          profiles:
+          - fastL4
+          vlan: "Internal"
+          state: "enabled"
+      {% endfor %}
+    dest: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}/vips.yml"
+  delegate_to: localhost
+
+- include_vars: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}/vips.yml"

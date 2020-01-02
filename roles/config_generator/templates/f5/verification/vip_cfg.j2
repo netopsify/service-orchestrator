@@ -1,0 +1,6 @@
+#jinja2: lstrip_blocks: "True"
+{% set services = hostvars[inventory_hostname]['vips'] %}
+{% for vip in services %}
+list ltm pool pool-tcp-{{ vip['vip_port'] }}.{{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }}
+list ltm virtual vs-tcp-{{ vip['vip_port'] }}.{{ vip['service_name'] }}.{{ vip['vip_name'] }}-{{ vip['service_type'] }}-{{ vip['vip_ip'] }}
+{% endfor %}

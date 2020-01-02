@@ -1,0 +1,18 @@
+{
+  "jira_story_subtasks_data": [
+    {
+      "task_description": [
+        "CG2ABSV2MPG,8191"
+      ],
+      "project_id": "10100",
+      "project_name": "Network Load Balancer Requests",
+      "project_key": "NLBR",
+      "task_status": "In Progress",
+      "task_priority": "Medium",
+      "task_summary": "DP-NetSrvcs-LoadBalancer-LBSRVC-OUT-PERF-MAIN",
+      "task_key": "NLBR-2",
+      "task_id": "10106",
+      "task_self": "http://192.168.100.100:8001/rest/api/2/issue/10106"
+    }
+  ]
+}

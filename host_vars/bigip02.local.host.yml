@@ -1,0 +1,32 @@
+l4_services:
+  lbsrvc-out-mainperf.local.net_8191:
+    pool:
+    - node_ip: 100.192.149.176
+      node_name: lbsrvcmainupfdpw05
+      node_port: '8191'
+    - node_ip: 100.192.149.177
+      node_name: lbsrvcmainupfdpw06
+      node_port: '8191'
+    service_name: CG2ABSV2MPG
+    service_type: out
+    vip_ip: 10.10.34.250
+    vip_name: lbsrvc-out-mainperf.local.net
+    vip_port: '8191'
+    vip_type: b
+# BEGIN ANSIBLE MANAGED BLOCK
+cluster_group:
+- bigip01.local.host
+- bigip02.local.host
+device: bigip02.local.host
+f5_type: ltm
+host: 192.168.189.233
+monitors:
+- monitor-8888-10.10.34.249
+- monitor-8888-10.10.34.251_2
+- monitor-8888-10.10.34.250
+- monitor-until-up-300
+platform: f5
+snat_irule: SNAT-39
+vip_pools:
+- 10.10.34.0/24
+# END ANSIBLE MANAGED BLOCK

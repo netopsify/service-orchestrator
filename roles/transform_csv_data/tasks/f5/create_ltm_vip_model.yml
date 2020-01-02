@@ -1,0 +1,28 @@
+---
+- name: Create VIPs objects => stored in all_requested_vips var
+  set_fact:
+    all_requested_vips: |
+        {% set vip_list = [] %}
+        {% set all_requested_vips = dict() %}
+        {% for i in user_request_vars %}
+        {% if {"vip_ip": i.vip_ip, "vip_name": i.vip_name, "vip_port": i.vip_port} in vip_list %}
+        {% set _ = all_requested_vips[i.vip_name ~ '_' ~ i.vip_port]['pool'].append({"node_ip": i.node_ip, "node_name": i.node_name, "node_port": i.node_port}) %}
+        {% else %}
+        {% set _ = all_requested_vips.update({i.vip_name ~ '_' ~ i.vip_port: {"vip_type": i.vip_type, "vip_ip": i.vip_ip, "vip_name": i.vip_name, "vip_port": i.vip_port, "service_name": i.service_name, "service_type": i.service_type, "pool": [ { "node_ip": i.node_ip, "node_name": i.node_name, "node_port": i.node_port}] }}) %}
+        {% set _ = vip_list.append({"vip_ip": i.vip_ip, "vip_name": i.vip_name, "vip_port": i.vip_port}) %}
+        {% endif %}
+        {% endfor %}
+        {{ all_requested_vips }}
+
+- debug: var=all_requested_vips
+  when: debug is defined
+
+- name: Copy all_requested_vips vars to file
+  copy: 
+    content: "{{ all_requested_vips | to_nice_yaml }}"
+    dest: "{{ playbook_dir }}/realtime_vars/all_requested_vips.yml"
+
+- name: include all_requested_vips vars to play
+  include_vars:
+    file: "{{ playbook_dir }}/realtime_vars/all_requested_vips.yml"
+    name: all_requested_vips

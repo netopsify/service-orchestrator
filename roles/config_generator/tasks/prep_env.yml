@@ -1,0 +1,40 @@
+---
+- name: Delete any previously created output files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ playbook_dir }}/config/implementation/"
+    - "{{ playbook_dir }}/config/pre_check/"
+    - "{{ playbook_dir }}/config/rollback/"
+    - "{{ playbook_dir }}/config/verification/"
+    - "{{ playbook_dir }}/config/Deploy_Notes_LB_WT_.txt"
+    - "{{ playbook_dir }}/config/{{ inventory_hostname }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Ensure required output directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ playbook_dir }}/config/header"
+    - "{{ playbook_dir }}/config/implementation"
+    - "{{ playbook_dir }}/config/pre_check"
+    - "{{ playbook_dir }}/config/rollback"
+    - "{{ playbook_dir }}/config/verification"
+    - "{{ playbook_dir }}/config/{{ inventory_hostname }}"
+  delegate_to: localhost
+  run_once: true
+
+# - name: Ensure required output files exist
+#   file:
+#     path: "{{ item }}"
+#     state: touch
+#   loop:
+#     - "{{ playbook_dir }}/config/implementation/config.txt"
+#     - "{{ playbook_dir }}/config/pre_check/config.txt"
+#     - "{{ playbook_dir }}/config/rollback/config.txt"
+#     - "{{ playbook_dir }}/config/verification/config.txt"
+#   delegate_to: localhost
+#   run_once: true

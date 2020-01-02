@@ -1,0 +1,194 @@
+{
+  "cache_control": "no-cache, no-store, no-transform",
+  "changed": false,
+  "connection": "close",
+  "content": "{\"expand\":\"renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations\",\"id\":\"10106\",\"self\":\"http://192.168.100.100:8001/rest/api/2/issue/10106\",\"key\":\"NLBR-2\",\"fields\":{\"issuetype\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/issuetype/10100\",\"id\":\"10100\",\"description\":\"A task that needs to be done.\",\"iconUrl\":\"http://192.168.100.100:8001/secure/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype\",\"name\":\"Task\",\"subtask\":false,\"avatarId\":10318},\"timespent\":null,\"project\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/project/10100\",\"id\":\"10100\",\"key\":\"NLBR\",\"name\":\"Network Load Balancer Requests\",\"projectTypeKey\":\"business\",\"avatarUrls\":{\"48x48\":\"http://192.168.100.100:8001/secure/projectavatar?avatarId=10324\",\"24x24\":\"http://192.168.100.100:8001/secure/projectavatar?size=small&avatarId=10324\",\"16x16\":\"http://192.168.100.100:8001/secure/projectavatar?size=xsmall&avatarId=10324\",\"32x32\":\"http://192.168.100.100:8001/secure/projectavatar?size=medium&avatarId=10324\"}},\"fixVersions\":[],\"aggregatetimespent\":null,\"resolution\":null,\"customfield_10104\":null,\"customfield_10105\":\"0|i0001z:\",\"resolutiondate\":null,\"workratio\":-1,\"lastViewed\":\"2019-11-14T15:20:21.779+0000\",\"watches\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/issue/NLBR-2/watchers\",\"watchCount\":1,\"isWatching\":true},\"created\":\"2019-11-12T21:29:40.189+0000\",\"priority\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/priority/3\",\"iconUrl\":\"http://192.168.100.100:8001/images/icons/priorities/medium.svg\",\"name\":\"Medium\",\"id\":\"3\"},\"customfield_10100\":null,\"labels\":[],\"timeestimate\":null,\"aggregatetimeoriginalestimate\":null,\"versions\":[],\"issuelinks\":[],\"assignee\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/user?username=********\",\"name\":\"********\",\"key\":\"JIRAUSER10000\",\"emailAddress\":\"********@netopsify.net\",\"avatarUrls\":{\"48x48\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48\",\"24x24\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24\",\"16x16\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16\",\"32x32\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32\"},\"displayName\":\"Local Admin\",\"active\":true,\"timeZone\":\"America/Toronto\"},\"updated\":\"2019-11-12T21:29:47.099+0000\",\"status\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/status/3\",\"description\":\"This issue is being actively worked on at the moment by the assignee.\",\"iconUrl\":\"http://192.168.100.100:8001/images/icons/statuses/inprogress.png\",\"name\":\"In Progress\",\"id\":\"3\",\"statusCategory\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/statuscategory/4\",\"id\":4,\"key\":\"indeterminate\",\"colorName\":\"yellow\",\"name\":\"In Progress\"}},\"components\":[],\"timeoriginalestimate\":null,\"description\":\"CG2ABSV2MPG\u00a08191\",\"customfield_10210\":null,\"timetracking\":{},\"customfield_10203\":null,\"customfield_10204\":null,\"customfield_10205\":null,\"customfield_10206\":null,\"attachment\":[],\"customfield_10207\":null,\"aggregatetimeestimate\":null,\"customfield_10208\":null,\"customfield_10209\":null,\"summary\":\"DP-NetSrvcs-LoadBalancer-LBSRVC-OUT-PERF-MAIN\",\"creator\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/user?username=********\",\"name\":\"********\",\"key\":\"JIRAUSER10000\",\"emailAddress\":\"********@netopsify.net\",\"avatarUrls\":{\"48x48\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48\",\"24x24\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24\",\"16x16\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16\",\"32x32\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32\"},\"displayName\":\"Local Admin\",\"active\":true,\"timeZone\":\"America/Toronto\"},\"subtasks\":[],\"reporter\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/user?username=********\",\"name\":\"********\",\"key\":\"JIRAUSER10000\",\"emailAddress\":\"********@netopsify.net\",\"avatarUrls\":{\"48x48\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48\",\"24x24\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24\",\"16x16\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16\",\"32x32\":\"https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32\"},\"displayName\":\"Local Admin\",\"active\":true,\"timeZone\":\"America/Toronto\"},\"customfield_10000\":\"{summaryBean=com.atlassian.jira.plugin.devstatus.rest.SummaryBean@9f92af0b[summary={pullrequest=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@6e3403f5[overall=PullRequestOverallBean{stateCount=0, state='OPEN', details=PullRequestOverallDetails{openCount=0, mergedCount=0, declinedCount=0}},byInstanceType={}], build=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@b114f0c[overall=com.atlassian.jira.plugin.devstatus.summary.beans.BuildOverallBean@4d10a357[failedBuildCount=0,successfulBuildCount=0,unknownBuildCount=0,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], review=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@35055292[overall=com.atlassian.jira.plugin.devstatus.summary.beans.ReviewsOverallBean@6c8b379a[stateCount=0,state=<null>,dueDate=<null>,overDue=false,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], deployment-environment=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@89a9fdb5[overall=com.atlassian.jira.plugin.devstatus.summary.beans.DeploymentOverallBean@4672b247[topEnvironments=[],showProjects=false,successfulCount=0,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], repository=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@ec7c774c[overall=com.atlassian.jira.plugin.devstatus.summary.beans.CommitOverallBean@c7ceec1a[count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], branch=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@8b9d903e[overall=com.atlassian.jira.plugin.devstatus.summary.beans.BranchOverallBean@93c16fd2[count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}]},errors=[],configErrors=[]], devSummaryJson={\\\"cachedValue\\\":{\\\"errors\\\":[],\\\"configErrors\\\":[],\\\"summary\\\":{\\\"pullrequest\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null,\\\"stateCount\\\":0,\\\"state\\\":\\\"OPEN\\\",\\\"details\\\":{\\\"openCount\\\":0,\\\"mergedCount\\\":0,\\\"declinedCount\\\":0,\\\"total\\\":0},\\\"open\\\":true},\\\"byInstanceType\\\":{}},\\\"build\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null,\\\"failedBuildCount\\\":0,\\\"successfulBuildCount\\\":0,\\\"unknownBuildCount\\\":0},\\\"byInstanceType\\\":{}},\\\"review\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null,\\\"stateCount\\\":0,\\\"state\\\":null,\\\"dueDate\\\":null,\\\"overDue\\\":false,\\\"completed\\\":false},\\\"byInstanceType\\\":{}},\\\"deployment-environment\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null,\\\"topEnvironments\\\":[],\\\"showProjects\\\":false,\\\"successfulCount\\\":0},\\\"byInstanceType\\\":{}},\\\"repository\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null},\\\"byInstanceType\\\":{}},\\\"branch\\\":{\\\"overall\\\":{\\\"count\\\":0,\\\"lastUpdated\\\":null},\\\"byInstanceType\\\":{}}}},\\\"isStale\\\":false}}\",\"aggregateprogress\":{\"progress\":0,\"total\":0},\"customfield_10200\":null,\"customfield_10201\":null,\"customfield_10202\":null,\"environment\":null,\"duedate\":null,\"progress\":{\"progress\":0,\"total\":0},\"comment\":{\"comments\":[],\"maxResults\":0,\"total\":0,\"startAt\":0},\"votes\":{\"self\":\"http://192.168.100.100:8001/rest/api/2/issue/NLBR-2/votes\",\"votes\":0,\"hasVoted\":false},\"worklog\":{\"startAt\":0,\"maxResults\":20,\"total\":0,\"worklogs\":[]}}}",
+  "content_security_policy": "frame-ancestors 'self'",
+  "content_type": "application/json;charset=UTF-8",
+  "cookies": {
+    "JSESSIONID": "DEDFE38BB730BC04AFD81F24C9CBB4AE",
+    "atlassian.xsrf.token": "B9SR-WEAG-BXCH-N881_e1b28ad49b5f9b25e5dca33ec034000f25f098ea_lin"
+  },
+  "cookies_string": "JSESSIONID=DEDFE38BB730BC04AFD81F24C9CBB4AE; atlassian.xsrf.token=B9SR-WEAG-BXCH-N881_e1b28ad49b5f9b25e5dca33ec034000f25f098ea_lin",
+  "date": "Thu, 14 Nov 2019 15:22:38 GMT",
+  "elapsed": 0,
+  "failed": false,
+  "json": {
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "fields": {
+      "aggregateprogress": {
+        "progress": 0,
+        "total": 0
+      },
+      "aggregatetimeestimate": null,
+      "aggregatetimeoriginalestimate": null,
+      "aggregatetimespent": null,
+      "assignee": {
+        "active": true,
+        "avatarUrls": {
+          "16x16": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16",
+          "24x24": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24",
+          "32x32": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32",
+          "48x48": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48"
+        },
+        "displayName": "Local Admin",
+        "emailAddress": "********@netopsify.net",
+        "key": "JIRAUSER10000",
+        "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+        "self": "http://192.168.100.100:8001/rest/api/2/user?username=********",
+        "timeZone": "America/Toronto"
+      },
+      "attachment": [],
+      "comment": {
+        "comments": [],
+        "maxResults": 0,
+        "startAt": 0,
+        "total": 0
+      },
+      "components": [],
+      "created": "2019-11-12T21:29:40.189+0000",
+      "creator": {
+        "active": true,
+        "avatarUrls": {
+          "16x16": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16",
+          "24x24": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24",
+          "32x32": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32",
+          "48x48": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48"
+        },
+        "displayName": "Local Admin",
+        "emailAddress": "********@netopsify.net",
+        "key": "JIRAUSER10000",
+        "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+        "self": "http://192.168.100.100:8001/rest/api/2/user?username=********",
+        "timeZone": "America/Toronto"
+      },
+      "customfield_10000": "{summaryBean=com.atlassian.jira.plugin.devstatus.rest.SummaryBean@9f92af0b[summary={pullrequest=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@6e3403f5[overall=PullRequestOverallBean{stateCount=0, state='OPEN', details=PullRequestOverallDetails{openCount=0, mergedCount=0, declinedCount=0}},byInstanceType={}], build=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@b114f0c[overall=com.atlassian.jira.plugin.devstatus.summary.beans.BuildOverallBean@4d10a357[failedBuildCount=0,successfulBuildCount=0,unknownBuildCount=0,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], review=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@35055292[overall=com.atlassian.jira.plugin.devstatus.summary.beans.ReviewsOverallBean@6c8b379a[stateCount=0,state=<null>,dueDate=<null>,overDue=false,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], deployment-environment=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@89a9fdb5[overall=com.atlassian.jira.plugin.devstatus.summary.beans.DeploymentOverallBean@4672b247[topEnvironments=[],showProjects=false,successfulCount=0,count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], repository=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@ec7c774c[overall=com.atlassian.jira.plugin.devstatus.summary.beans.CommitOverallBean@c7ceec1a[count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}], branch=com.atlassian.jira.plugin.devstatus.rest.SummaryItemBean@8b9d903e[overall=com.atlassian.jira.plugin.devstatus.summary.beans.BranchOverallBean@93c16fd2[count=0,lastUpdated=<null>,lastUpdatedTimestamp=<null>],byInstanceType={}]},errors=[],configErrors=[]], devSummaryJson={\"cachedValue\":{\"errors\":[],\"configErrors\":[],\"summary\":{\"pullrequest\":{\"overall\":{\"count\":0,\"lastUpdated\":null,\"stateCount\":0,\"state\":\"OPEN\",\"details\":{\"openCount\":0,\"mergedCount\":0,\"declinedCount\":0,\"total\":0},\"open\":true},\"byInstanceType\":{}},\"build\":{\"overall\":{\"count\":0,\"lastUpdated\":null,\"failedBuildCount\":0,\"successfulBuildCount\":0,\"unknownBuildCount\":0},\"byInstanceType\":{}},\"review\":{\"overall\":{\"count\":0,\"lastUpdated\":null,\"stateCount\":0,\"state\":null,\"dueDate\":null,\"overDue\":false,\"completed\":false},\"byInstanceType\":{}},\"deployment-environment\":{\"overall\":{\"count\":0,\"lastUpdated\":null,\"topEnvironments\":[],\"showProjects\":false,\"successfulCount\":0},\"byInstanceType\":{}},\"repository\":{\"overall\":{\"count\":0,\"lastUpdated\":null},\"byInstanceType\":{}},\"branch\":{\"overall\":{\"count\":0,\"lastUpdated\":null},\"byInstanceType\":{}}}},\"isStale\":false}}",
+      "customfield_10100": null,
+      "customfield_10104": null,
+      "customfield_10105": "0|i0001z:",
+      "customfield_10200": null,
+      "customfield_10201": null,
+      "customfield_10202": null,
+      "customfield_10203": null,
+      "customfield_10204": null,
+      "customfield_10205": null,
+      "customfield_10206": null,
+      "customfield_10207": null,
+      "customfield_10208": null,
+      "customfield_10209": null,
+      "customfield_10210": null,
+      "description": "CG2ABSV2MPG\u00a08191",
+      "duedate": null,
+      "environment": null,
+      "fixVersions": [],
+      "issuelinks": [],
+      "issuetype": {
+        "avatarId": 10318,
+        "description": "A task that needs to be done.",
+        "iconUrl": "http://192.168.100.100:8001/secure/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+        "id": "10100",
+        "name": "Task",
+        "self": "http://192.168.100.100:8001/rest/api/2/issuetype/10100",
+        "subtask": false
+      },
+      "labels": [],
+      "lastViewed": "2019-11-14T15:20:21.779+0000",
+      "priority": {
+        "iconUrl": "http://192.168.100.100:8001/images/icons/priorities/medium.svg",
+        "id": "3",
+        "name": "Medium",
+        "self": "http://192.168.100.100:8001/rest/api/2/priority/3"
+      },
+      "progress": {
+        "progress": 0,
+        "total": 0
+      },
+      "project": {
+        "avatarUrls": {
+          "16x16": "http://192.168.100.100:8001/secure/projectavatar?size=xsmall&avatarId=10324",
+          "24x24": "http://192.168.100.100:8001/secure/projectavatar?size=small&avatarId=10324",
+          "32x32": "http://192.168.100.100:8001/secure/projectavatar?size=medium&avatarId=10324",
+          "48x48": "http://192.168.100.100:8001/secure/projectavatar?avatarId=10324"
+        },
+        "id": "10100",
+        "key": "NLBR",
+        "name": "Network Load Balancer Requests",
+        "projectTypeKey": "business",
+        "self": "http://192.168.100.100:8001/rest/api/2/project/10100"
+      },
+      "reporter": {
+        "active": true,
+        "avatarUrls": {
+          "16x16": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=16",
+          "24x24": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=24",
+          "32x32": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=32",
+          "48x48": "https://www.gravatar.com/avatar/0aebf5882052c802c61df668cbd232ec?d=mm&s=48"
+        },
+        "displayName": "Local Admin",
+        "emailAddress": "********@netopsify.net",
+        "key": "JIRAUSER10000",
+        "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+        "self": "http://192.168.100.100:8001/rest/api/2/user?username=********",
+        "timeZone": "America/Toronto"
+      },
+      "resolution": null,
+      "resolutiondate": null,
+      "status": {
+        "description": "This issue is being actively worked on at the moment by the assignee.",
+        "iconUrl": "http://192.168.100.100:8001/images/icons/statuses/inprogress.png",
+        "id": "3",
+        "name": "In Progress",
+        "self": "http://192.168.100.100:8001/rest/api/2/status/3",
+        "statusCategory": {
+          "colorName": "yellow",
+          "id": 4,
+          "key": "indeterminate",
+          "name": "In Progress",
+          "self": "http://192.168.100.100:8001/rest/api/2/statuscategory/4"
+        }
+      },
+      "subtasks": [],
+      "summary": "DP-NetSrvcs-LoadBalancer-LBSRVC-OUT-PERF-MAIN",
+      "timeestimate": null,
+      "timeoriginalestimate": null,
+      "timespent": null,
+      "timetracking": {},
+      "updated": "2019-11-12T21:29:47.099+0000",
+      "versions": [],
+      "votes": {
+        "hasVoted": false,
+        "self": "http://192.168.100.100:8001/rest/api/2/issue/NLBR-2/votes",
+        "votes": 0
+      },
+      "watches": {
+        "isWatching": true,
+        "self": "http://192.168.100.100:8001/rest/api/2/issue/NLBR-2/watchers",
+        "watchCount": 1
+      },
+      "worklog": {
+        "maxResults": 20,
+        "startAt": 0,
+        "total": 0,
+        "worklogs": []
+      },
+      "workratio": -1
+    },
+    "id": "10106",
+    "key": "NLBR-2",
+    "self": "http://192.168.100.100:8001/rest/api/2/issue/10106"
+  },
+  "msg": "OK (unknown bytes)",
+  "redirected": false,
+  "set_cookie": "JSESSIONID=DEDFE38BB730BC04AFD81F24C9CBB4AE; Path=/; HttpOnly, atlassian.xsrf.token=B9SR-WEAG-BXCH-N881_e1b28ad49b5f9b25e5dca33ec034000f25f098ea_lin; Path=/",
+  "status": 200,
+  "transfer_encoding": "chunked",
+  "url": "http://192.168.100.100:8001/rest/api/2/issue/NLBR-2",
+  "x_arequestid": "922x9168x1",
+  "x_asen": "SEN-14933906",
+  "x_asessionid": "121zmll",
+  "x_ausername": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+  "x_content_type_options": "nosniff",
+  "x_frame_options": "SAMEORIGIN",
+  "x_seraph_loginreason": "OK",
+  "x_xss_protection": "1; mode=block"
+}

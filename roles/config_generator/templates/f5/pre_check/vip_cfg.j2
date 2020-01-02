@@ -1,0 +1,7 @@
+#jinja2: lstrip_blocks: "True"
+{% set services = hostvars[inventory_hostname]['vips'] | to_nice_yaml%}
+{% for item in hostvars[inventory_hostname]['vips'] %}
+list ltm virtual destination | grep {{ item['vip_ip'] }}:{{ item['vip_port'] }}
+list ltm pool pool-tcp-{{ item['vip_port'] }}.{{ item['service_name'] }}.{{ item['vip_name'] }}-{{ item['service_type'] }}-{{ item['vip_ip'] }}
+list ltm virtual vs-tcp-{{ item['vip_port'] }}.{{ item['service_name'] }}.{{ item['vip_name'] }}-{{ item['service_type'] }}-{{ item['vip_ip'] }}
+{% endfor %}

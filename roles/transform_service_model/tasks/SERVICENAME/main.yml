@@ -1,0 +1,5 @@
+---
+- include_tasks: service_model.yml
+  tags:
+  - dp_vips_sot
+- include_tasks: jira_story_fetch.yml

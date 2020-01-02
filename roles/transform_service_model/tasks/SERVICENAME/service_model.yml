@@ -1,0 +1,43 @@
+---
+    - name: include DP_VIP_MODEL csv file
+      read_csv:
+        path: "{{ playbook_dir }}/sot/service_to_vip_mapping.csv"
+      register: dp_vips_sot_csv
+      delegate_to: localhost
+      # when: jira_input is defined
+      tags: dp_vips_sot
+
+    - name: set DP VIP MODEL as facts
+      set_fact:
+          dp_vips_sot_list: "{{ dp_vips_sot_csv.list }}"
+      # when: jira_input is defined
+      tags: dp_vips_sot
+
+    - name: Save DP MODEL to file
+      copy:
+        content: |
+          {% set model = dict() %}
+          {% set _ = model.update({"dp_vip_sot_structure_vars":[]}) %}
+          {% for vip in dp_vips_sot_list %}
+          {% set _ = model['dp_vip_sot_structure_vars'].append(vip) %}
+          {% endfor %}
+          {{ model | to_nice_yaml(indent=2) }}
+        dest: "{{ playbook_dir }}/sot/dp_vip_sot_structure_vars.yml"
+      tags: dp_vips_sot
+
+    - name: Include the GP SERVICENAME VIP Structure vars
+      include_vars:
+        file: "{{ playbook_dir }}/sot/dp_vip_sot_structure_vars.yml"
+      tags: dp_vips_sot
+
+    - name: Generate DP SERVICENAME Serivce model
+      template:
+        src: "service_model.j2"
+        dest: "{{ playbook_dir }}/sot/dp_SERVICENAME_service_model.yml"
+      tags: dp_vips_sot
+
+    - name: Include the DP SERVICENAME Service Model Vars
+      include_vars:
+        file: "{{ playbook_dir }}/sot/dp_SERVICENAME_service_model.yml"
+        name: dp_SERVICENAME_service_model
+      tags: dp_vips_sot

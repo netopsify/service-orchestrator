@@ -1,0 +1,102 @@
+---
+- include_vars: "{{ playbook_dir }}/realtime_vars/{{ inventory_hostname }}/vips.yml"
+
+- name: Create backup file
+  bigip_command:
+    commands: "save /sys ucs {{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}.ucs"
+    provider: "{{ f5_creds }}"
+  delegate_to: localhost
+  when: backup is defined
+
+- name: Confirm ucs file exists
+  bigip_command:
+    commands: run /util bash -c "ls -l /var/local/ucs/*.ucs"
+    provider: "{{ f5_creds }}"
+  register: result
+  delegate_to: localhost
+  when: backup is defined
+
+- debug: var=result['stdout'][0]
+  when: debug is defined
+
+- name: Confirm ucs file exists
+  assert:
+    that:
+      - "lookup('pipe', 'date +%Y-%m-%d-%H') in result['stdout'][0]"
+    fail_msg: "UCS file creation failed"
+    # success_msg: "UCS file was created successfully"
+  when: backup is defined
+
+- name: Delete ucs file exists
+  bigip_command:
+    commands: run /util bash -c "rm -f /var/local/ucs/*.ucs"
+    provider: "{{ f5_creds }}"
+  register: result
+  delegate_to: localhost
+  when: delete_ucs is defined
+
+- name: Creating nodes
+  bigip_node:
+    provider: "{{ f5_creds }}"
+    host: "{{item.1.host}}"
+    name: "{{item.1.name}}"
+    state: "{{ item.1.node_state }}"
+  with_subelements:
+    - "{{ vips }}"
+    - pool.nodes
+  delegate_to: localhost
+  loop_control:
+    label: "{{ item.1.name }} {{ item.1.host }} {{ item.1.node_state }}"
+
+- name: Create pool
+  bigip_pool:
+    provider: "{{ f5_creds }}"
+    name: "{{ item.value.pool.name }}"
+    state: "{{ item.value.pool.state }}"
+  with_dict:
+    - "{{ vips }}"
+  delegate_to: localhost
+  loop_control:
+    label: "{{ item.value.pool.name}}"
+
+- name: Add Pool members
+  bigip_pool_member:
+    provider: "{{ f5_creds }}"
+    name: "{{ item.1.name }}"
+    host: "{{ item.1.host }}"
+    port: "{{ item.1.port }}"
+    pool: "{{ item.0.pool.name }}"
+    state: "{{ item.1.member_state }}"
+    preserve_node: yes
+  with_subelements:
+    - "{{ vips }}"
+    - pool.nodes
+  delegate_to: localhost
+  loop_control:
+    label: "{{ item.0.pool.name }} -> {{ item.1.name }} -> {{ item.1.host }} -> {{ item.1.port }} -> {{ item.1.member_state }}"
+
+- name: Add Virtual Servers
+  bigip_virtual_server:
+    provider: "{{ f5_creds }}"
+    name: "{{ item.value.name | default('item.key') }}"
+    description: "{{ item.value.description }}"
+    destination: "{{ item.value.destination }}"
+    type: "{{ item.value.f5_vip_type }}"
+    port: "{{ item.value.port }}"
+    pool: "{{ item.value.pool.name }}"
+    snat: "{{ item.value.snat | default('none') }}"
+    profiles: "{{ item.value.profiles | default('') }}"
+    irules: "{{ item.value.irules | default('') }}"
+    enabled_vlans: "{{ item.value.vlan | default('') }}"
+    state: "{{ item.value.state }}"
+  with_dict:
+    - "{{ vips }}"
+  delegate_to: localhost
+  loop_control:
+    label: "{{ item.key }} -> {{ item.value.destination }} -> {{ item.value.port }} -> {{ item.value.vlan }} -> {{ item.value.state }}"
+
+- name: Save the running configuration of the BIG-IP
+  bigip_config:
+    save: yes
+    provider: "{{ f5_creds }}"
+  delegate_to: localhost

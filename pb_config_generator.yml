@@ -1,0 +1,211 @@
+# ansible-playbook pb_config_generator.yml -i "localhost", -c "local" -e "csv_input=True" -e "platform=f5" -e "jira_input=False"
+# ansible-playbook pb_config_generator.yml -i "localhost", -c "local" -e "jira_url=https://jira.corp.net/browse/TICR-9795"
+# For Jira input if Jira instance is not live comment out the lines from 2 - 64 in roles/transform_service_mode/tasks/SERVICENAME/jira_story_fetch.yml
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+  - roles/lib_yaml_editor
+  
+  tasks:
+    - name: remove any previously created directories
+      file:
+        name: "{{ item }}"
+        state: absent
+      loop:
+      - "{{ config_builder_sot_dir }}"
+      - "{{ config_builder_config_dir }}"
+
+    - name: Clone config repo
+      git:
+        repo: "{{ config_builder_config }}"
+        version: master
+        dest: "{{ config_builder_config_dir }}"
+      tags:
+        - clone_repo
+
+    - name: Clone sot repo
+      git:
+        repo: "{{ config_builder_sot }}"
+        version: master
+        dest: "{{ config_builder_sot_dir }}"
+      tags:
+        - clone_repo
+
+    - name: transform csv request into service model for creating f5 vips
+      include_role:
+        name: transform_csv_data
+      when: csv_input is defined
+      tags:
+      - vip_model
+
+    - name: create service models from different sources
+      include_role:
+        name: transform_service_model
+      when: jira_input is defined
+      tags:
+      - vip_model
+      - jira_tickes
+
+#*******************************************************************************************************#
+# transform_csv_data role expects that CSV vars are passed as all_requested_vips variable name.
+# This role will store the output of CSV into all_requested_vips var for further processing.
+# Essentially a list of VIPs config based on CSV input in the following data structure:
+# srv-in.local.net_8166:
+#     pool:
+#     -   node_ip: 10.221.23.31
+#         node_name: SERVICENAMEbccuprdpw01
+#         node_port: '8166'
+#     -   node_ip: 10.221.23.32
+#         node_name: SERVICENAMEbccuprdpw02
+#         node_port: '8166'
+#     -   node_ip: 10.221.23.33
+#         node_name: SERVICENAMEbccuprdpw03
+#         node_port: '8166'
+#     -   node_ip: 10.221.23.34
+#         node_name: SERVICENAMEbccuprdpw04
+#         node_port: '8166'
+#     service_name: MDESServiceMPGW
+#     service_type: IN
+#     vip_ip: 10.221.18.251
+#     vip_name: SERVICENAME-in-bccprod.corp.net
+#     vip_port: '8166'
+#     vip_type: a
+#*******************************************************************************************************#
+    - name: Transform CSV
+      include_role:
+          name: transform_csv_data
+      when: csv_input is defined
+
+#*******************************************************************************************************#
+# This role will populate the source of truth of a device based on the VIPs requested.
+# This role will store vars in vips_to_be_deployed.yml
+# Taking input from CSV vars and mapping it to DEVICE.
+# bigip01.local.host:
+#     SERVICENAME-in-bccprod.corp.net_8166:
+#         pool:
+#         -   node_ip: 10.221.23.31
+#             node_name: SERVICENAMEbccuprdpw01
+#             node_port: '8166'
+#         -   node_ip: 10.221.23.32
+#             node_name: SERVICENAMEbccuprdpw02
+#             node_port: '8166'
+#         -   node_ip: 10.221.23.33
+#             node_name: SERVICENAMEbccuprdpw03
+#             node_port: '8166'
+#         -   node_ip: 10.221.23.34
+#             node_name: SERVICENAMEbccuprdpw04
+#             node_port: '8166'
+#         service_name: MDESServiceMPGW
+#         service_type: IN
+#         vip_ip: 10.221.18.251
+#         vip_name: SERVICENAME-in-bccprod.corp.net
+#         vip_port: '8166'
+#         vip_type: a
+# Initialy this role will update host_vars of a said device.
+# However, the mechanism can be used to expand into any other system too.
+# Since we are populating the source of truth.
+# It assumes somes level of information is given to it for it to be able to correlate back.
+# This could be minimal configuration fetched from devices.
+# For example, to begin with you may have some device based service structure.
+# You can then input that information into this role. See example at `sot/l4_services.yml`
+# It will then use that info to build the SOT
+#*******************************************************************************************************#
+    - name: Populate source of truth based on user request
+      include_role:
+          name: populate_sot
+
+#*******************************************************************************************************#
+# This play is to create the configuration snippets based on the host vars.
+#*******************************************************************************************************#
+- hosts: dynamic_hosts
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: debug hostvars of the F5 devices
+      debug:
+        var: hostvars[item]
+      loop: "{{ groups.dynamic_hosts }}"
+      when: debug is defined
+
+# #*******************************************************************************************************#
+# # config_generator role to generate vendor specific configuration.
+# # The hosts are dynamically generated by the populate_sot role.
+# #*******************************************************************************************************#
+    - name: Render Config
+      include_role:
+          name: config_generator
+
+    - name: set git user
+      git_config:
+        name: user.name
+        scope: global
+        value: ansible
+
+    - name: set git user email
+      git_config:
+        name: user.email
+        scope: global
+        value: ansible@local.host
+
+    - name: commit generated config upstream
+      shell: "cd {{ config_builder_config_dir }} && git add -A && git diff-index --quiet HEAD || git commit -m 'Commit by Ansible {{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }} Jira Ticket {{ jira_url.split('/')[4] }}'"
+
+    - name: push changes upstream
+      shell: "cd {{ config_builder_config_dir }} && git push -f"
+      
+    - name: commit generated sot upstream
+      shell: "cd {{ config_builder_sot_dir }} && git add -A && git diff-index --quiet HEAD || git commit -m 'Commit by Ansible {{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }} Jira Ticket {{ jira_url.split('/')[4] }}'"
+
+    - name: push changes upstream
+      shell: "cd {{ config_builder_sot_dir }} && git push -f"
+
+    - name: Collect all config files
+      find:
+        paths: "{{ config_builder_config_dir }}"
+        recurse: yes
+        patterns: 'Deploy_Notes_*.txt'
+      register: output_files
+
+    - debug:
+        msg: The following files will be sent {{ output_files['files'] | map(attribute='path') | select() | list | sort  }}
+
+    - name: Sending an e-mail using Gmail SMTP servers
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: "{{ email_from }}"
+        password: "{{ password }}"
+        # from: noreply@netopsify.net (Network Automation System)
+        to: "{{ email_to }}"
+        subject: Deploy Scripts
+        body: Deploy Scripts are attached in this email. Thank you.
+        attach: "{{ output_files['files'] | map(attribute='path') | select() | list | sort  }}"
+        subtype: "html"
+        headers: "Content-type=text/html"
+      connection: local
+      delegate_to: localhost
+      become: false
+      run_once: true
+      check_mode: no
+
+- hosts: dynamic_hosts
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: debug hostvars of the F5 devices
+      debug:
+        var: hostvars[item]
+      loop: "{{ groups.dynamic_hosts }}"
+      when: debug is defined
+
+#*******************************************************************************************************#
+# deploy role to deploy the config to F5
+# The hosts are dynamically generated by the populate_sot role.
+#*******************************************************************************************************#
+    - name: Deploy Config
+      include_role:
+          name: deploy

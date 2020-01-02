@@ -1,0 +1,5 @@
+service_name,service_type,vip_name,vip_ip,vip_port,node_name,node_ip,node_port,vip_type
+servicename1,IN,srv-in.local.net,10.10.34.251,8166,serverpw01,10.22.1.31,8166,a
+servicename1,IN,srv-in.local.net,10.10.34.251,8166,serverpw02,10.22.1.32,8166,a
+servicename1,OUT,srv-out.local.net,10.10.34.251,8166,serverpw01,10.21.1.31,8166,b
+servicename1,OUT,srv-out.local.net,10.10.34.251,8166,serverpw01,10.21.1.31,8166,b

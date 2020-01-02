@@ -1,0 +1,32 @@
+---
+- name: include csv file
+  read_csv:
+    path: user_request/request.csv
+  register: user_request
+  delegate_to: localhost
+  when: csv_input is defined
+
+- name: set user request as facts
+  set_fact:
+      user_request_vars: "{{ user_request.list }}"
+  when: csv_input is defined
+
+- name: Delete any previously created output files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ playbook_dir }}/realtime_vars/*.*"
+
+- name: Ensure required output directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ playbook_dir }}/realtime_vars/"
+
+- name: Copy CSV SLB request data into yaml
+  copy:
+    content: "{{ user_request_vars | to_nice_yaml }}"
+    dest: "{{ playbook_dir }}/realtime_vars/user_request_vars.yml"
+

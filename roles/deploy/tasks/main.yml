@@ -1,0 +1,22 @@
+---
+- name: Include tasks for building config based on business logic
+  include_tasks: "config_builder.yml"
+
+- name: Include device specific task
+  include_tasks: "{{ ansible_network_os }}.yml"
+#   loop: "{{ hostvars[inventory_hostname]['vips'] }}"
+# - git_config:
+#     name: user.name
+#     scope: global
+#     value: Jenkins
+# - git_config:
+#     name: user.email
+#     scope: global
+#     value: jenkins@local.host
+
+# - name: "ADDING, COMMITTING AND PUSHING UPDATED STATE DATA TO GIT REPOSITORY"
+#   shell: cd {{ role_path }} && git add . &&  git  commit -m 'Commit by Ansible {{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}' && git push -u origin master
+# #   when: git is defined
+#   delegate_to: localhost
+#   run_once: True
+#   ignore_errors: yes

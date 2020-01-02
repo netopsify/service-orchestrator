@@ -1,0 +1,32 @@
+vips:
+  vs-tcp-8191.CG2ABSV2MPG.lbsrvc-out-mainperf.local.net-out-10.10.34.250:
+    name: vs-tcp-8191.CG2ABSV2MPG.lbsrvc-out-mainperf.local.net-out-10.10.34.250
+    description: CG2ABSV2MPG.lbsrvc-out-mainperf.local.net-out-10.10.34.250-8191
+    destination: 10.10.34.250
+    port: 8191
+    snat: "automap"
+    pool:
+      name: pool-tcp-8191.CG2ABSV2MPG.lbsrvc-out-mainperf.local.net-out-10.10.34.250
+      lb_mode: "least-connections-node"
+      state: present
+      nodes:
+      - host: 100.192.149.176
+        name: lbsrvcmainupfdpw05
+        port: 8191
+        node_state: enabled
+        member_state: enabled
+      - host: 100.192.149.177
+        name: lbsrvcmainupfdpw06
+        port: 8191
+        node_state: enabled
+        member_state: enabled
+    monitors:
+    - "monitor-tcp-time-until-up-300"
+    - monitor-8888-10.10.34.250
+    irules:
+    - SNAT-39
+    f5_vip_type: "performance-l4"
+    profiles:
+    - fastL4
+    vlan: "Internal"
+    state: "enabled"

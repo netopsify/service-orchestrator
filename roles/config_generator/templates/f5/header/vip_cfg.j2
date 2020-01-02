@@ -1,0 +1,30 @@
+#jinja2: lstrip_blocks: "True"
+#=================#
+Deploy Notes:
+#=================#
+
+{% set services = hostvars[inventory_hostname]['vips'] %}
+{% for vip in services %}
+
+Add the following services:
+
+Virtual Server:
+===============
+
+Service_name, Service_type, Virtual_Server_IP, Virtual_Server_Port
+{{ vip['service_name'] }}, {{ vip['service_type'] }}, {{ vip['vip_ip'] }}, {{ vip['vip_port'] }}
+
+Pool Members:
+=============
+
+Node_IP, Node_Port
+{% for node in vip['pool'] %}
+{{ node.node_ip }}, {{ node.node_port }}
+{% endfor %}
+
+Profiles: {% for profile in vip['profiles'] %}{{ profile }}, {% if not loop.last %} {% endif %}{% endfor %}
+
+Monitors: {% for monitor in vip['monitors'] %}{{ monitor }}{% if not loop.last %} and {% endif %}{% endfor %}
+
+{% if vip['snat_irule'] is defined%}iRule: {{ vip['snat_irule'] }}{%endif%}
+{% endfor %}

@@ -1,0 +1,51 @@
+#jinja2: lstrip_blocks: "True"
+--------------------------------------------------------------------------------
+                             <<<DEVICES>>>
+--------------------------------------------------------------------------------
+
+++++++++++++++++++++++++++++++++++++++++++++++
+{% for dev in hostvars[inventory_hostname]['cluster_group'] %}
+{{ dev }} - {{ hostvars[dev]['ansible_host'] }}
+{% endfor %}
+++++++++++++++++++++++++++++++++++++++++++++++
+
+--------------------------------------------------------------------------------
+                            <<<Deploy Notes>>>
+--------------------------------------------------------------------------------
+
+{{lookup('file', playbook_dir+'/config/header/'+inventory_hostname+'/header.txt') }}
+
+--------------------------------------------------------------------------------
+                            <<<PRE-CHECK>>>
+--------------------------------------------------------------------------------
+
+{{lookup('file', playbook_dir+'/config/pre_check/'+inventory_hostname+'/pre_check.txt') }}
+
+--------------------------------------------------------------------------------
+                      <<<IMPLEMENTATION INSTRUCTIONS>>>
+--------------------------------------------------------------------------------
+
+#### Please implement the F5 changes on one device and save/sync configuration ONLY after successfull verification. ####
+
+{{lookup('file', playbook_dir+'/config/implementation/'+inventory_hostname+'/implementation.txt') }}
+
+--------------------------------------------------------------------------------
+                            <<<VERIFICATION>>>
+--------------------------------------------------------------------------------
+
+{{lookup('file', playbook_dir+'/config/verification/'+inventory_hostname+'/verification.txt') }}
+
+--------------------------------------------------------------------------------
+                          <<<SAVE and SYNC CONFIGURATION>>>
+--------------------------------------------------------------------------------
+
+#### Once config is implemented and verfied, sync the config to the respective sync-group. ####
+
+save sys config
+run cm config-sync to-group SyncFailover
+
+--------------------------------------------------------------------------------
+                            <<<ROLL BACK >>>
+--------------------------------------------------------------------------------
+
+{{lookup('file', playbook_dir+'/config/rollback/'+inventory_hostname+'/rollback.txt') }}

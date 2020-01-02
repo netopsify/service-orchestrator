@@ -1,0 +1,30 @@
+bigip01.local.host:
+    lbsrvc-out-mainperf.local.net_8191:
+        pool:
+        -   node_ip: 100.192.149.176
+            node_name: lbsrvcmainupfdpw05
+            node_port: '8191'
+        -   node_ip: 100.192.149.177
+            node_name: lbsrvcmainupfdpw06
+            node_port: '8191'
+        service_name: CG2ABSV2MPG
+        service_type: out
+        vip_ip: 10.10.34.250
+        vip_name: lbsrvc-out-mainperf.local.net
+        vip_port: '8191'
+        vip_type: b
+bigip02.local.host:
+    lbsrvc-out-mainperf.local.net_8191:
+        pool:
+        -   node_ip: 100.192.149.176
+            node_name: lbsrvcmainupfdpw05
+            node_port: '8191'
+        -   node_ip: 100.192.149.177
+            node_name: lbsrvcmainupfdpw06
+            node_port: '8191'
+        service_name: CG2ABSV2MPG
+        service_type: out
+        vip_ip: 10.10.34.250
+        vip_name: lbsrvc-out-mainperf.local.net
+        vip_port: '8191'
+        vip_type: b
